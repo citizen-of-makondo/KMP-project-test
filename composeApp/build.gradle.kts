@@ -17,7 +17,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -28,7 +28,7 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -46,18 +46,18 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(libs.auth.kmp)
-            implementation(libs.firebase.app)
-
             implementation(libs.koin.compose)
 
             api(libs.kmp.notifier)
 
-     /*       implementation(project(path = ":navigation"))
+            implementation(libs.auth.kmp)
+            implementation(libs.firebase.app)
+
             implementation(project(path = ":shared"))
-            implementation(project(path = ":di"))
-            implementation(project(path = ":data"))
-   */     }
+            implementation(project(path = ":navigation"))
+            //       implementation(project(path = ":di"))
+            //         implementation(project(path = ":data"))
+        }
     }
 }
 
