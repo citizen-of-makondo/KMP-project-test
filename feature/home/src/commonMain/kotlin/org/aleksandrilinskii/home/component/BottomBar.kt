@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun BottomBar(
     modifier: Modifier = Modifier,
-    selected: Boolean,
+    selected: BottomBarDestination,
     onClick: (BottomBarDestination) -> Unit
 ) {
     Row(
@@ -39,7 +39,7 @@ fun BottomBar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         BottomBarDestination.entries.forEach { destination ->
-            val animatedTint = if (selected) {
+            val animatedTint = if (selected == destination) {
                 IconSecondary
             } else IconPrimary
 
