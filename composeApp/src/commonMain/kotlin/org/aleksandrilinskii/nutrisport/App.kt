@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.aleksandrilinskii.navigation.NavGraph
-import com.aleksandrilinskii.navigation.Screen
+import com.aleksandrilinskii.nutrisport.shared.navigation.Screen
 import com.aleksandrilinskii.nutrisport.shared.Constants
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
