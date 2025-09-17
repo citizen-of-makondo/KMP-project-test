@@ -22,19 +22,13 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "auth"
+            baseName = "di"
             isStatic = true
         }
     }
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.splash.screen)
-            implementation(libs.koin.android)
-        }
-        commonMain.dependencies {
+          commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -44,21 +38,18 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(libs.messagebar.kmp)
-            implementation(libs.auth.kmp)
-            implementation(libs.auth.firebase.kmp)
-
             implementation(libs.koin.compose)
+            implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(project(":shared") )
-            implementation(project(":data") )
+            implementation(project(":feature:auth"))
+            implementation(project(":data"))
         }
     }
 }
 
 android {
-    namespace = "org.aleksandrilinskii.auth"
+    namespace = "org.aleksandrilinskii.di"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

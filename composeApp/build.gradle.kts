@@ -19,7 +19,6 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -55,8 +54,8 @@ kotlin {
 
             implementation(project(path = ":shared"))
             implementation(project(path = ":navigation"))
-            //       implementation(project(path = ":di"))
-            //         implementation(project(path = ":data"))
+            implementation(project(path = ":di"))
+            implementation(project(path = ":data"))
         }
     }
 }

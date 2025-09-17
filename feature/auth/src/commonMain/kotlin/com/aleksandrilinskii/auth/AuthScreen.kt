@@ -23,13 +23,18 @@ import com.aleksandrilinskii.nutrisport.shared.Alpha
 import com.aleksandrilinskii.nutrisport.shared.BebasNeueFont
 import com.aleksandrilinskii.nutrisport.shared.FontSize
 import com.aleksandrilinskii.nutrisport.shared.Surface
+import com.aleksandrilinskii.nutrisport.shared.SurfaceBrand
+import com.aleksandrilinskii.nutrisport.shared.SurfaceError
 import com.aleksandrilinskii.nutrisport.shared.TextPrimary
 import com.aleksandrilinskii.nutrisport.shared.TextSecondary
+import com.aleksandrilinskii.nutrisport.shared.TextWhite
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
+import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 
 @Composable
 fun AuthScreen() {
+    val viewModel = koinViewModel<AuthViewModel>()
     val messageBarState = rememberMessageBarState()
     var loadingState by remember {
         mutableStateOf(false)
@@ -41,12 +46,14 @@ fun AuthScreen() {
                 contentBackgroundColor = Surface,
                 messageBarState = messageBarState,
                 errorMaxLines = 2,
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
+                errorContainerColor = SurfaceError,
+                errorContentColor = TextWhite,
+                successContainerColor = SurfaceBrand,
+                successContentColor = TextPrimary
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
+                    modifier = Modifier.fillMaxSize().padding(24.dp),
                 ) {
                     Column(
                         modifier = Modifier.weight(1f),
@@ -64,8 +71,7 @@ fun AuthScreen() {
 
                         Text(
                             "Sign in to continue",
-                            modifier = Modifier.fillMaxWidth()
-                                .alpha(Alpha.HALF),
+                            modifier = Modifier.fillMaxWidth().alpha(Alpha.HALF),
                             textAlign = TextAlign.Center,
                             fontSize = FontSize.REGULAR,
                             color = TextPrimary
@@ -74,31 +80,33 @@ fun AuthScreen() {
 
                     GoogleButtonUiContainerFirebase(
                         onResult = { result ->
-                            result
-                                .onSuccess { user ->
-                                messageBarState.addSuccess("Authenticated as ${user?.email}")
-                                loadingState = false
-                            }.onFailure { error ->
-                                when {
-                                    error.message?.contains("A network error") == true ->
-                                        messageBarState.addError("No internet connection")
+                            result.onSuccess { user ->
+                                    viewModel.createCustomer(
+                                        user = user,
+                                        onSuccess = { messageBarState.addSuccess("Authenticated as ${user?.email}") },
+                                        onError = { error -> messageBarState.addError(error) })
+                                    loadingState = false
+                                }.onFailure { error ->
+                                    when {
+                                        error.message?.contains("A network error") == true -> messageBarState.addError(
+                                            "No internet connection"
+                                        )
 
-                                    error.message?.contains("Idtoken is null") == true ->
-                                        messageBarState.addError("Sign in cancelled")
+                                        error.message?.contains("Idtoken is null") == true -> messageBarState.addError(
+                                            "Sign in cancelled"
+                                        )
 
-                                    else ->
-                                        messageBarState.addError(error.message ?: "Unknown error")
+                                        else -> messageBarState.addError(
+                                            error.message ?: "Unknown error"
+                                        )
+                                    }
+                                    loadingState = false
                                 }
-                                loadingState = false
-                            }
-                        }
-                    ) {
+                        }) {
                         GoogleButton(
-                            loading = loadingState,
-                            onClick = {
+                            loading = loadingState, onClick = {
                                 this@GoogleButtonUiContainerFirebase.onClick()
-                            }
-                        )
+                            })
                     }
                 }
             }
