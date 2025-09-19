@@ -1,6 +1,7 @@
 package org.aleksandrilinskii.data
 
 import com.aleksandrilinskii.nutrisport.shared.domain.Customer
+import com.aleksandrilinskii.nutrisport.shared.util.RequestState
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.auth.auth
@@ -41,5 +42,14 @@ class CustomerRepositoryImpl : CustomerRepository {
 
     override fun getCurrentUserId(): String? {
         return Firebase.auth.currentUser?.uid
+    }
+
+    override suspend fun signOut(): RequestState<Unit> {
+        return try {
+            Firebase.auth.signOut()
+            RequestState.Success(Unit)
+        } catch (e: Exception) {
+            RequestState.Error("Error signing out: ${e.message}")
+        }
     }
 }
