@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -23,12 +22,18 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "navigation"
+            baseName = "profile"
             isStatic = true
         }
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.splash.screen)
+            implementation(libs.koin.android)
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -39,20 +44,19 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(libs.compose.navigation)
+            implementation(libs.messagebar.kmp)
 
-            implementation(libs.kotlinx.serialization)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
 
-            implementation(project(":feature:auth"))
-            implementation(project(":feature:home"))
-            implementation(project(":feature:profile"))
-            implementation(project(":shared"))
+            implementation(project(":shared") )
+            implementation(project(":data") )
         }
     }
 }
 
 android {
-    namespace = "org.aleksandrilinskii.navigation"
+    namespace = "org.aleksandrilinskii.profile"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

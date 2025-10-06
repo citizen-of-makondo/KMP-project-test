@@ -1,7 +1,6 @@
 package com.aleksandrilinskii.nutrisport.shared.navigation
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.resources.DrawableResource
 
 @Serializable
 sealed class Screen {
@@ -20,4 +19,7 @@ sealed class Screen {
 
     @Serializable
     data object Categories : Screen()
+
+    @Serializable
+    data object Profile : Screen()
 }

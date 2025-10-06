@@ -1,7 +1,6 @@
 package com.aleksandrilinskii.auth.component
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
@@ -30,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import com.aleksandrilinskii.nutrisport.shared.BorderIdle
 import com.aleksandrilinskii.nutrisport.shared.FontSize
 import com.aleksandrilinskii.nutrisport.shared.Gray
 import com.aleksandrilinskii.nutrisport.shared.GrayDarker
@@ -48,7 +48,7 @@ fun GoogleButton(
     icon: DrawableResource = Resources.Image.GoogleLogo,
     shape: Shape = RoundedCornerShape(size = 99.dp),
     backgroundColor: Color = Gray,
-    borderColor: Color = GrayDarker,
+    borderColor: Color = BorderIdle,
     progressIndicatorColor: Color = IconSecondary,
     onClick: () -> Unit
 ) {
