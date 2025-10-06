@@ -1,13 +1,23 @@
 package com.aleksandrilinskii.nutrisport.shared.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aleksandrilinskii.nutrisport.shared.component.dialog.CountryPickerDialog
@@ -29,12 +39,21 @@ fun ProfileForm(
     onAddressChange: (String) -> Unit,
     phone: String?,
     onPhoneChange: (String?) -> Unit,
+    country: Country,
+    onCountryChange: (Country) -> Unit
 ) {
-    CountryPickerDialog(
-        country = Country.Serbia,
-        onDismiss = {},
-        onConfirm = {}
-    )
+    var showCountryPicker by remember { mutableStateOf(false) }
+
+    AnimatedVisibility(showCountryPicker) {
+        CountryPickerDialog(
+            country = country,
+            onDismiss = { showCountryPicker = false },
+            onConfirm = { country ->
+                onCountryChange(country)
+                showCountryPicker = false
+            }
+        )
+    }
 
     Column(
         modifier
@@ -90,11 +109,24 @@ fun ProfileForm(
             error = address.length !in 3..100
         )
 
-        CustomTextField(
-            value = phone.orEmpty(),
-            onValueChange = { onPhoneChange(it.ifBlank { null }) },
-            placeholder = "Phone",
-            error = phone != null && phone.length !in 5..30
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            AlertTextField(
+                icon = country.flag,
+                text = "+${country.dialCode}",
+                onClick = { showCountryPicker = true }
+            )
+
+            Spacer(Modifier.width(12.dp))
+
+            CustomTextField(
+                value = phone.orEmpty(),
+                onValueChange = { onPhoneChange(it.ifBlank { null }) },
+                placeholder = "Phone",
+                error = phone != null && phone.length !in 5..30
+            )
+        }
     }
 }

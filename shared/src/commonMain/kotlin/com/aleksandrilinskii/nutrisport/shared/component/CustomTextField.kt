@@ -11,7 +11,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,7 +58,6 @@ fun CustomTextField(
             {
                 Text(
                     text = placeholder,
-                    modifier = Modifier.alpha(Alpha.HALF),
                     fontSize = FontSize.REGULAR
                 )
             }
@@ -74,9 +72,6 @@ fun CustomTextField(
             focusedTextColor = TextPrimary,
             unfocusedTextColor = TextPrimary,
             disabledTextColor = TextPrimary.copy(alpha = Alpha.DISABLED),
-            focusedPlaceholderColor = TextPrimary.copy(alpha = Alpha.HALF),
-            unfocusedPlaceholderColor = TextPrimary.copy(alpha = Alpha.HALF),
-            disabledPlaceholderColor = TextPrimary.copy(alpha = Alpha.DISABLED),
             disabledContainerColor = SurfaceDarker,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,

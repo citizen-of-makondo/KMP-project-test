@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.aleksandrilinskii.nutrisport.shared.Alpha
+import com.aleksandrilinskii.nutrisport.shared.ErrorCard
 import com.aleksandrilinskii.nutrisport.shared.FontSize
 import com.aleksandrilinskii.nutrisport.shared.IconWhite
 import com.aleksandrilinskii.nutrisport.shared.Resources
@@ -105,27 +106,34 @@ fun CountryPickerDialog(
 
                 Spacer(Modifier.height(12.dp))
 
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(
-                        filteredCountries,
-                        key = { it.ordinal }
-                    ) { country ->
-                        CountryPicker(
-                            country = country,
-                            isSelected = selectedCountry == country,
-                            onClick = { selectedCountry = country }
-                        )
+                if (filteredCountries.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(
+                            filteredCountries,
+                            key = { it.ordinal }
+                        ) { country ->
+                            CountryPicker(
+                                country = country,
+                                isSelected = selectedCountry == country,
+                                onClick = { selectedCountry = country }
+                            )
+                        }
                     }
+                } else {
+                    ErrorCard(
+                        modifier = Modifier.weight(1f),
+                        message = "Dial code not found"
+                    )
                 }
             }
         },
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(country) },
+                onClick = { onConfirm(selectedCountry) },
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = Color.Transparent,
                     contentColor = TextSecondary

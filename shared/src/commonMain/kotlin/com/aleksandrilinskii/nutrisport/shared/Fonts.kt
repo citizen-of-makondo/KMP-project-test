@@ -1,7 +1,6 @@
 package com.aleksandrilinskii.nutrisport.shared
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import nutrisport.shared.generated.resources.Res
