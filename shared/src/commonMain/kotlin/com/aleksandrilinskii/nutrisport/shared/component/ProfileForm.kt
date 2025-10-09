@@ -31,11 +31,11 @@ fun ProfileForm(
     lastName: String,
     onLastNameChange: (String) -> Unit,
     email: String,
-    city: String,
+    city: String?,
     onCityChange: (String) -> Unit,
     postalCode: Int?,
     onPostalCodeChange: (Int?) -> Unit,
-    address: String,
+    address: String?,
     onAddressChange: (String) -> Unit,
     phone: String?,
     onPhoneChange: (String?) -> Unit,
@@ -58,10 +58,6 @@ fun ProfileForm(
     Column(
         modifier
             .fillMaxSize()
-            .padding(
-                horizontal = 24.dp,
-                vertical = 12.dp
-            )
             .verticalScroll(state = rememberScrollState())
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -89,24 +85,24 @@ fun ProfileForm(
         )
 
         CustomTextField(
-            value = city,
+            value = city.orEmpty(),
             onValueChange = onCityChange,
             placeholder = "City",
-            error = city.length !in 3..50
+            error = city?.length !in 3..50
         )
 
         CustomTextField(
-            value = postalCode.toString(),
+            value = postalCode?.toString().orEmpty(),
             onValueChange = { onPostalCodeChange(it.toIntOrNull()) },
             placeholder = "Postal Code",
             error = postalCode.toString().length !in 3..10
         )
 
         CustomTextField(
-            value = address,
+            value = address.orEmpty(),
             onValueChange = onAddressChange,
             placeholder = "Address",
-            error = address.length !in 3..100
+            error = address?.length !in 3..100
         )
 
         Row(

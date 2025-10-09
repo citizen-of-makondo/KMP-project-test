@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PrimaryButton(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     text: String,
     icon: DrawableResource? = null,
     enabled: Boolean = true,

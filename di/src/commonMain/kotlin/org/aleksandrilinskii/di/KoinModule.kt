@@ -4,6 +4,7 @@ import com.aleksandrilinskii.auth.AuthViewModel
 import org.aleksandrilinskii.data.CustomerRepositoryImpl
 import org.aleksandrilinskii.data.domain.CustomerRepository
 import org.aleksandrilinskii.home.HomeGraphViewModel
+import org.aleksandrilinskii.profile.ProfileViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -13,6 +14,7 @@ val sharedModule = module {
     single<CustomerRepository> { CustomerRepositoryImpl() }
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeGraphViewModel)
+    viewModelOf(::ProfileViewModel)
 }
 
 fun initializeKoinModule(

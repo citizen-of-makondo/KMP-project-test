@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.aleksandrilinskii.nutrisport.shared.Alpha
-import com.aleksandrilinskii.nutrisport.shared.ErrorCard
+import com.aleksandrilinskii.nutrisport.shared.component.ErrorCard
 import com.aleksandrilinskii.nutrisport.shared.FontSize
 import com.aleksandrilinskii.nutrisport.shared.IconWhite
 import com.aleksandrilinskii.nutrisport.shared.Resources

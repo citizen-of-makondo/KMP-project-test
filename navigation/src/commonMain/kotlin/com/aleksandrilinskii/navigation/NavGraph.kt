@@ -10,9 +10,7 @@ import org.aleksandrilinskii.home.HomeGraphScreen
 import org.aleksandrilinskii.profile.ProfileScreen
 
 @Composable
-fun NavGraph(
-    startDestination: Screen = Screen.Auth
-) {
+fun NavGraph(startDestination: Screen = Screen.Auth) {
     val navController = rememberNavController()
 
     NavHost(
@@ -43,7 +41,11 @@ fun NavGraph(
         }
 
         composable<Screen.Profile> {
-             ProfileScreen()
+             ProfileScreen(
+                 navigateBack = {
+                        navController.navigateUp()
+                 }
+             )
         }
     }
 }
