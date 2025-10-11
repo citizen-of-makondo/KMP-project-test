@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aleksandrilinskii.auth.AuthScreen
 import com.aleksandrilinskii.nutrisport.shared.navigation.Screen
+import org.aleksandrilinskii.admin_panel.AdminPanelScreen
 import org.aleksandrilinskii.home.HomeGraphScreen
 import org.aleksandrilinskii.profile.ProfileScreen
 
@@ -36,6 +37,9 @@ fun NavGraph(startDestination: Screen = Screen.Auth) {
                 },
                 navigateToProfile = {
                     navController.navigate(Screen.Profile)
+                },
+                navigateToAdminPanel = {
+                    navController.navigate(Screen.AdminPanel)
                 }
             )
         }
@@ -46,6 +50,14 @@ fun NavGraph(startDestination: Screen = Screen.Auth) {
                         navController.navigateUp()
                  }
              )
+        }
+
+        composable<Screen.AdminPanel> {
+            AdminPanelScreen(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
