@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aleksandrilinskii.nutrisport.shared.domain.Country
+import com.aleksandrilinskii.nutrisport.shared.domain.Customer
 import com.aleksandrilinskii.nutrisport.shared.domain.PhoneNumber
 import com.aleksandrilinskii.nutrisport.shared.util.RequestState
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import org.aleksandrilinskii.data.domain.CustomerRepository
 
 data class ProfileScreenState(
+    val id: String = "",
     val firstName: String = "",
     val lastName: String = "",
     val email: String = "",
@@ -26,7 +28,7 @@ data class ProfileScreenState(
 )
 
 class ProfileViewModel(
-   private val customerRepository: CustomerRepository
+    private val customerRepository: CustomerRepository
 ) : ViewModel() {
 
     val customer = customerRepository.readCustomerFlow()
@@ -41,12 +43,23 @@ class ProfileViewModel(
     var screenState: ProfileScreenState by mutableStateOf(ProfileScreenState())
         private set
 
+    val isFormValid: Boolean
+        get() = with(screenState) {
+            firstName.length in 3..50 &&
+                    lastName.length in 3..50 &&
+                    city?.length in 3..50 &&
+                    (postalCode != null && postalCode.length in 3..10) &&
+                    address?.length in 3..100 &&
+                    (phone == null || phone.number.length in 3..15)
+        }
+
     init {
         viewModelScope.launch {
             customer.collectLatest { data ->
                 if (data.isSuccess()) {
                     val customerData = data.getSuccessData()
                     screenState = ProfileScreenState(
+                        id = customerData.id,
                         firstName = customerData.firstName,
                         lastName = customerData.lastName,
                         email = customerData.email,
@@ -112,16 +125,25 @@ class ProfileViewModel(
         )
     }
 
-    fun updateProfile() {
+    fun updateProfile(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
         viewModelScope.launch {
-           /* customerRepository.updateCustomer(
-                firstName = screenState.firstName,
-                lastName = screenState.lastName,
-                city = screenState.city,
-                phoneNumber = screenState.phone,
-                postalCode = screenState.postalCode,
-                address = screenState.address
-            )*/
+            customerRepository.updateCustomer(
+                customer = Customer(
+                    id = screenState.id,
+                    firstName = screenState.firstName,
+                    lastName = screenState.lastName,
+                    email = screenState.email,
+                    city = screenState.city,
+                    phoneNumber = screenState.phone,
+                    postalCode = screenState.postalCode,
+                    address = screenState.address
+                ),
+                onSuccess = onSuccess,
+                onError = { error -> onError(error) }
+            )
         }
     }
 }

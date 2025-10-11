@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.aleksandrilinskii.nutrisport.shared.component.dialog.CountryPickerDialog
 import com.aleksandrilinskii.nutrisport.shared.domain.Country
@@ -88,14 +90,15 @@ fun ProfileForm(
             value = city.orEmpty(),
             onValueChange = onCityChange,
             placeholder = "City",
-            error = city?.length !in 3..50
+            error = city == null || city.length !in 3..50
         )
 
         CustomTextField(
             value = postalCode?.toString().orEmpty(),
             onValueChange = { onPostalCodeChange(it.toIntOrNull()) },
             placeholder = "Postal Code",
-            error = postalCode.toString().length !in 3..10
+            error = postalCode == null || postalCode.toString().length !in 3..10,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         CustomTextField(
@@ -121,7 +124,8 @@ fun ProfileForm(
                 value = phone.orEmpty(),
                 onValueChange = { onPhoneChange(it.ifBlank { null }) },
                 placeholder = "Phone",
-                error = phone != null && phone.length !in 5..30
+                error = phone != null && phone.length !in 5..30,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
         }
     }
