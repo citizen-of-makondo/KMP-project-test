@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -23,12 +22,19 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "navigation"
+            baseName = "manage_product"
             isStatic = true
         }
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.splash.screen)
+            implementation(libs.koin.android)
+            implementation(libs.ktor.android.client)
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -39,22 +45,27 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(libs.compose.navigation)
+            implementation(libs.messagebar.kmp)
 
-            implementation(libs.kotlinx.serialization)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
 
-            implementation(project(":feature:auth"))
-            implementation(project(":feature:home"))
-            implementation(project(":feature:profile"))
-            implementation(project(":feature:admin_panel"))
-            implementation(project(":feature:admin_panel:manage_product"))
-            implementation(project(":shared"))
+            implementation(libs.coil3)
+            implementation(libs.coil3.compose)
+            implementation(libs.coil3.compose.core)
+            implementation(libs.coil3.network.ktor)
+
+            implementation(project(":shared") )
+            implementation(project(":data") )
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.darwin.client)
         }
     }
 }
 
 android {
-    namespace = "org.aleksandrilinskii.navigation"
+    namespace = "org.aleksandrilinskii.manage_product"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

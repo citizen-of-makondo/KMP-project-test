@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.aleksandrilinskii.auth.AuthScreen
 import com.aleksandrilinskii.nutrisport.shared.navigation.Screen
 import org.aleksandrilinskii.admin_panel.AdminPanelScreen
 import org.aleksandrilinskii.home.HomeGraphScreen
+import org.aleksandrilinskii.manage_product.ManageProductScreen
 import org.aleksandrilinskii.profile.ProfileScreen
 
 @Composable
@@ -45,15 +47,27 @@ fun NavGraph(startDestination: Screen = Screen.Auth) {
         }
 
         composable<Screen.Profile> {
-             ProfileScreen(
-                 navigateBack = {
-                        navController.navigateUp()
-                 }
-             )
+            ProfileScreen(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
 
         composable<Screen.AdminPanel> {
             AdminPanelScreen(
+                navigateBack = {
+                    navController.navigateUp()
+                },
+                navigateToManageProduct = { id ->
+                    navController.navigate(Screen.ManageProduct(id))
+                }
+            )
+        }
+
+        composable<Screen.ManageProduct> {
+            ManageProductScreen(
+                id = it.toRoute<Screen.ManageProduct>().id,
                 navigateBack = {
                     navController.navigateUp()
                 }
