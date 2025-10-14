@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aleksandrilinskii.nutrisport.shared.domain.Product
 import com.aleksandrilinskii.nutrisport.shared.domain.ProductCategory
+import com.aleksandrilinskii.nutrisport.shared.util.RequestState
+import dev.gitlive.firebase.storage.File
 import kotlinx.coroutines.launch
 import org.aleksandrilinskii.data.domain.AdminRepository
 import kotlin.uuid.ExperimentalUuidApi
@@ -29,6 +31,8 @@ class ManageProductViewModel(
 ) : ViewModel() {
     var screenState by mutableStateOf(ManageProductState())
         private set
+    var uploadingImage: RequestState<Unit> by mutableStateOf(RequestState.Idle)
+        private set
 
     val isFormValid: Boolean
         get() = screenState.title.isNotBlank() &&
@@ -47,6 +51,10 @@ class ManageProductViewModel(
 
     fun updateThumbnail(newThumbnail: String) {
         screenState = screenState.copy(thumbnail = newThumbnail)
+    }
+
+    fun updateImageLoaderState(newState: RequestState<Unit>) {
+        uploadingImage = newState
     }
 
     fun updateCategory(newCategory: ProductCategory) {
@@ -88,6 +96,34 @@ class ManageProductViewModel(
                 onSuccess = onSuccess,
                 onError = onError
             )
+        }
+    }
+
+    fun uploadImage(
+        file: File?,
+        onSuccess: () -> Unit
+    ) {
+        if (file == null) {
+            updateImageLoaderState(RequestState.Error("No image selected"))
+        } else {
+            updateImageLoaderState(RequestState.Loading)
+            viewModelScope.launch {
+                try {
+                    val downloadUrl = adminRepository.uploadImageToStorage(file = file)
+
+                    if (downloadUrl?.isNotBlank() == true) {
+                        updateThumbnail(downloadUrl)
+                    } else {
+                        throw Exception("Failed to get download URL")
+                    }
+
+                    onSuccess()
+                    updateImageLoaderState(RequestState.Success(Unit))
+                } catch (e: Exception) {
+                    updateImageLoaderState(RequestState.Error(e.message ?: "Unknown error"))
+                }
+            }
+
         }
     }
 }

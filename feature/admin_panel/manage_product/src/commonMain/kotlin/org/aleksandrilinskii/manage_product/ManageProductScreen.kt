@@ -34,8 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.aleksandrilinskii.nutrisport.shared.BebasNeueFont
 import com.aleksandrilinskii.nutrisport.shared.BorderIdle
 import com.aleksandrilinskii.nutrisport.shared.FontSize
@@ -46,9 +51,15 @@ import com.aleksandrilinskii.nutrisport.shared.SurfaceLighter
 import com.aleksandrilinskii.nutrisport.shared.TextPrimary
 import com.aleksandrilinskii.nutrisport.shared.component.AlertTextField
 import com.aleksandrilinskii.nutrisport.shared.component.CustomTextField
+import com.aleksandrilinskii.nutrisport.shared.component.ErrorCard
+import com.aleksandrilinskii.nutrisport.shared.component.LoadingCard
 import com.aleksandrilinskii.nutrisport.shared.component.PrimaryButton
 import com.aleksandrilinskii.nutrisport.shared.component.dialog.CategoryDialog
+import com.aleksandrilinskii.nutrisport.shared.util.DisplayResult
+import com.aleksandrilinskii.nutrisport.shared.util.RequestState
+import org.aleksandrilinskii.manage_product.util.PhotoPicker
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 
@@ -62,7 +73,17 @@ fun ManageProductScreen(
     val messageBarState = rememberMessageBarState()
     val screenState = viewModel.screenState
     val isFormValid = viewModel.isFormValid
+    val uploadingImage = viewModel.uploadingImage
     var showCategoryDialog by remember { mutableStateOf(false) }
+    val photoPicker = koinInject<PhotoPicker>()
+    photoPicker.InitializePhotoPicker(
+        onPhotoSelected = { file ->
+            viewModel.uploadImage(
+                file = file,
+                onSuccess = { messageBarState.addSuccess("Image uploaded successfully") },
+            )
+        }
+    )
 
     AnimatedVisibility(
         visible = showCategoryDialog,
@@ -145,16 +166,56 @@ fun ManageProductScreen(
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .background(SurfaceLighter)
-                            .clickable {
-
+                            .clickable(
+                                enabled = uploadingImage is RequestState.Idle
+                            ) {
+                                photoPicker.open()
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            painter = painterResource(Resources.Icon.Plus),
-                            contentDescription = null,
-                            tint = IconPrimary,
-                            modifier = Modifier.size(24.dp)
+                        uploadingImage.DisplayResult(
+                            onIdle = {
+                                Icon(
+                                    painter = painterResource(Resources.Icon.Plus),
+                                    contentDescription = null,
+                                    tint = IconPrimary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            onLoading = { LoadingCard(modifier = Modifier.fillMaxSize()) },
+                            onSuccess = {
+                                AsyncImage(
+                                    modifier = Modifier.fillMaxSize(),
+                                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                                        .data(screenState.thumbnail)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            },
+                            onError = { message ->
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    ErrorCard(message = message)
+
+                                    Spacer(modifier = Modifier.height(12.dp))
+
+                                    PrimaryButton(
+                                        text = "Retry",
+                                        icon = Resources.Icon.Plus,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 24.dp),
+                                        onClick = {
+                                            viewModel.updateImageLoaderState(RequestState.Idle)
+                                        }
+                                    )
+                                }
+                            }
                         )
                     }
 
