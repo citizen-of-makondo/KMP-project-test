@@ -1,9 +1,12 @@
 package org.aleksandrilinskii.di
 
 import com.aleksandrilinskii.auth.AuthViewModel
+import org.aleksandrilinskii.data.AdminRepositoryImpl
 import org.aleksandrilinskii.data.CustomerRepositoryImpl
+import org.aleksandrilinskii.data.domain.AdminRepository
 import org.aleksandrilinskii.data.domain.CustomerRepository
 import org.aleksandrilinskii.home.HomeGraphViewModel
+import org.aleksandrilinskii.manage_product.ManageProductViewModel
 import org.aleksandrilinskii.profile.ProfileViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -12,9 +15,11 @@ import org.koin.dsl.module
 
 val sharedModule = module {
     single<CustomerRepository> { CustomerRepositoryImpl() }
+    single<AdminRepository> { AdminRepositoryImpl() }
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeGraphViewModel)
     viewModelOf(::ProfileViewModel)
+    viewModelOf(::ManageProductViewModel)
 }
 
 fun initializeKoinModule(

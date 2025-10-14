@@ -48,8 +48,8 @@ import com.aleksandrilinskii.nutrisport.shared.component.AlertTextField
 import com.aleksandrilinskii.nutrisport.shared.component.CustomTextField
 import com.aleksandrilinskii.nutrisport.shared.component.PrimaryButton
 import com.aleksandrilinskii.nutrisport.shared.component.dialog.CategoryDialog
-import com.aleksandrilinskii.nutrisport.shared.domain.ProductCategory
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,18 +58,20 @@ fun ManageProductScreen(
     id: String?,
     navigateBack: () -> Unit
 ) {
+    val viewModel = koinViewModel<ManageProductViewModel>()
     val messageBarState = rememberMessageBarState()
-    var selectedCategory by remember { mutableStateOf(ProductCategory.entries.first()) }
+    val screenState = viewModel.screenState
+    val isFormValid = viewModel.isFormValid
     var showCategoryDialog by remember { mutableStateOf(false) }
 
     AnimatedVisibility(
         visible = showCategoryDialog,
         content = {
             CategoryDialog(
-                category = selectedCategory,
+                category = screenState.category,
                 onDismiss = { showCategoryDialog = false },
                 onSelectCategory = { category ->
-                    selectedCategory = category
+                    viewModel.updateCategory(category)
                     showCategoryDialog = false
                 }
             )
@@ -143,7 +145,9 @@ fun ManageProductScreen(
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .background(SurfaceLighter)
-                            .clickable {},
+                            .clickable {
+
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -155,41 +159,41 @@ fun ManageProductScreen(
                     }
 
                     CustomTextField(
-                        value = "",
-                        onValueChange = {},
+                        value = screenState.title,
+                        onValueChange = viewModel::updateTitle,
                         placeholder = "Title"
                     )
 
                     CustomTextField(
                         modifier = Modifier.height(120.dp),
-                        value = "",
-                        onValueChange = {},
+                        value = screenState.description,
+                        onValueChange = viewModel::updateDescription,
                         placeholder = "Description",
                         expanded = true
                     )
 
                     AlertTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        text = selectedCategory.title,
+                        text = screenState.category.title,
                         onClick = { showCategoryDialog = true }
                     )
 
                     CustomTextField(
-                        value = "",
-                        onValueChange = {},
+                        value = screenState.weight?.toString() ?: "",
+                        onValueChange = viewModel::updateWeight,
                         placeholder = "Weight",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
 
                     CustomTextField(
-                        value = "",
-                        onValueChange = {},
+                        value = screenState.flavors?.joinToString(", ") ?: "",
+                        onValueChange = viewModel::updateFlavors,
                         placeholder = "Flavors (optional)"
                     )
 
                     CustomTextField(
-                        value = "",
-                        onValueChange = {},
+                        value = screenState.price,
+                        onValueChange = viewModel::updatePrice,
                         placeholder = "Price",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -200,8 +204,14 @@ fun ManageProductScreen(
                 PrimaryButton(
                     text = if (id == null) "Add Product" else "Save Changes",
                     icon = if (id == null) Resources.Icon.Plus else Resources.Icon.Checkmark,
-                    onClick = { /* TODO: Implement action */ },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = isFormValid,
+                    onClick = {
+                        viewModel.createNewProduct(
+                            onSuccess = { messageBarState.addSuccess("Product added successfully") },
+                            onError = { errorMessage -> messageBarState.addError(errorMessage) }
+                        )
+                    },
                 )
             }
         }
